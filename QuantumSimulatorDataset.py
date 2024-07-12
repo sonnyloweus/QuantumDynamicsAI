@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
     # save_circuit_params(params, 'dense_small.param')
 
-    params = generate_circuit_params(file_name=None)
+    params = generate_circuit_params(12, 12)
 
     # If GPU available, use below line
     dataset = QuantumSimulationDatasetFast(params, 64, 4, device='cuda', inverse_density=3)
