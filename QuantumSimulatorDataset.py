@@ -204,8 +204,8 @@ if __name__ == '__main__':
     params = generate_circuit_params(12, 12)
 
     # If GPU available, use below line
-    dataset = QuantumSimulationDatasetFast(params, 64, 4, device='cuda', inverse_density=3)
-    # dataset = QuantumSimulationDataset(params, 64)
+    # dataset = QuantumSimulationDatasetFast(params, 64, 4, device='cuda', inverse_density=3)
+    dataset = QuantumSimulationDataset(params, 64)
 
     for i, (initial, final) in enumerate(dataset):
         print(i, initial[0], final[0])
