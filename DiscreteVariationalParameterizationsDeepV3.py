@@ -5,7 +5,7 @@ import math
 import numpy as np
 rng = np.random.default_rng()
 
-class EnergyBasedModelEmbeddingDynamics(nn.DModule):
+class EnergyBasedModelEmbeddingDynamics(nn.Module):
     def __init__(self, dim, hidden_dim=None):
         super().__init__()
         self.dim = dim # dimension of y
