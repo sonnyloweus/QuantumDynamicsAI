@@ -120,7 +120,7 @@ class EnergyBasedModelEmbeddingDynamics(nn.Module):
     # and is in generally the right direction, but is definitely not good enough for evaluation
     @staticmethod
     @torch.no_grad()
-    def estimated_log_partition_function(z, W1, b1, W2, b2, W3, b3, W4, b4, samples=512):
+    def estimated_log_partition_function_params(z, W1, b1, W2, b2, W3, b3, W4, b4, samples=512):
         dim = z.shape[-1]
         z = z.expand(samples, -1, -1)
         w = (torch.rand_like(z) < 0.5).float()
@@ -129,7 +129,7 @@ class EnergyBasedModelEmbeddingDynamics(nn.Module):
         return dim * math.log(2) - math.log(samples) + torch.logsumexp(log_probs, dim=0)
 
     def estimated_log_partition_function(self, z):
-        return EnergyBasedModelEmbeddingDynamics.estimated_log_partition_function(z, self.linear_1_weight,
+        return EnergyBasedModelEmbeddingDynamics.estimated_log_partition_function_params(z, self.linear_1_weight,
                                                                                   self.linear_1_bias,
                                                                                   self.linear_2_weight,
                                                                                   self.linear_2_bias,
@@ -168,7 +168,7 @@ class EnergyBasedModelEmbeddingDynamics(nn.Module):
     def estimated_normalized_log_probabilities_w_given_z_params(z, w, W1, b1, W2, b2, W3, b3, W4, b4):
         return EnergyBasedModelEmbeddingDynamics.unnormalized_log_probs_w_given_z_params(z, w, W1, b1, W2,
                                                                                   b2, W3, b3, W4, b4) - \
-               EnergyBasedModelEmbeddingDynamics.estimated_log_partition_function(z, W1, b1, W2, b2, W3, b3, W4, b4)
+               EnergyBasedModelEmbeddingDynamics.estimated_log_partition_function_params(z, W1, b1, W2, b2, W3, b3, W4, b4)
 
     @staticmethod
     def estimated_normalized_log_probabilities_w_given_z_better_params(z, w, x, W, b, W1, b1, W2, b2, W3, b3, W4, b4):
@@ -289,7 +289,7 @@ class BoltzmannBasedEncoder(nn.Module):
         return partitions
 
     @staticmethod
-    def conditional_log_probability_a_given_b_params(a, b, b_param, W_param):
+    def conditional_log_probability_a_given_b_params(a, b, b_param, W_param, padding1, padding2):
         return BoltzmannBasedEncoder.unnormalized_log_probs_a_given_b_params(a, b, b_param, W_param)
 
     def conditional_log_probability_a_given_b(self, a, b):
