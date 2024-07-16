@@ -52,13 +52,20 @@ class EnergyBasedModelEmbeddingDynamics(nn.Module):
         batch_size = i1.shape[0]
         outer_product = torch.einsum('bi,bj->bij', (i1, i2))
         outer_product = outer_product.view(batch_size, -1)
+        dropout = torch.nn.Dropout(p=0.1)
+
         temp = torch.nn.functional.linear(outer_product, W1, bias=b1)
         temp = torch.nn.functional.relu(temp)
+        temp = dropout(temp)
         temp = torch.nn.functional.linear(temp, W2, b2)
+        temp = torch.nn.functional.layer_norm(temp, temp.size()[1:])
         temp = torch.nn.functional.relu(temp)
+        temp = dropout(temp)
         temp = torch.nn.functional.linear(temp, W3, b3)
         temp = torch.nn.functional.relu(temp)
+        temp = dropout(temp)
         temp = torch.nn.functional.linear(temp, W4)
+
         return temp
 
     @staticmethod
@@ -339,12 +346,18 @@ class EnergyBasedDecoder(nn.Module):
     @staticmethod
     def energy_function_linear(a, b, W1, b1, W2, b2, W3, b3, W4, b4):
         outer_product = torch.einsum('bi,bj->bij', (a, b))
+        dropout = torch.nn.Dropout(p=0.1)
+
         temp = torch.nn.functional.linear(outer_product.view(a.shape[0], -1), W1, b1)
         temp = torch.nn.functional.relu(temp)
+        temp = dropout(temp)
         temp = torch.nn.functional.linear(temp, W2, b2)
+        temp = torch.nn.functional.layer_norm(temp, temp.size()[1:])
         temp = torch.nn.functional.relu(temp)
+        temp = dropout(temp)
         temp = torch.nn.functional.linear(temp, W3, b3)
         temp = torch.relu(temp)
+        temp = dropout(temp)
         temp = torch.nn.functional.linear(temp, W4)
         return temp
 
