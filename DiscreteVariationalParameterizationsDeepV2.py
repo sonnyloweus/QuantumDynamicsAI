@@ -50,8 +50,9 @@ class EnergyBasedModelEmbeddingDynamics(nn.Module):
     @staticmethod
     def energy_function_bilinear(i1, i2, W1, b1, W2, b2, W3, b3, W4, b4):
         batch_size = i1.shape[0]
-        outer_product = torch.einsum('bi,bj->bij', (i1, i2))
-        outer_product = outer_product.view(batch_size, -1)
+        # outer_product = torch.einsum('bi,bj->bij', (i1, i2))
+        # outer_product = outer_product.view(batch_size, -1)
+        outer_product = torch.bmm(i1.unsqueeze(2), i2.unsqueeze(1)).view(batch_size, -1)
         dropout = torch.nn.Dropout(p=0.1)
 
         temp = torch.nn.functional.linear(outer_product, W1, bias=b1)
